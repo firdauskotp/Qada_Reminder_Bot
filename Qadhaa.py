@@ -5,10 +5,11 @@ from telegram.ext import CallbackContext, CommandHandler, MessageHandler, Filter
 import os
 import pymongo
 from pymongo import MongoClient
+import random
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',level=logging.INFO)
 updater = Updater(token='5006375684:AAGL9DwGk9DsS1XVU-uwT48K8-VkdpRA0Dw', use_context=True)
-client = pymongo.MongoClient("mongodb+srv://fkna:firdausafiqkhaiacap@cluster0.lsslc.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+client = pymongo.MongoClient("mongodb+srv://fkna:firdausafiqkhaiacap@cluster0.lsslc.mongodb.net/userDB?retryWrites=true&w=majority")
 
 db = client["userDB"]
 col1=db["userC"]
@@ -20,10 +21,20 @@ maghrib=0
 isyak=0
 setStatus=0
 
+#lists of pictures
+grave = ["./assets/img/grave/grave1.jfif","./assets/img/grave/grave2.jfif","./assets/img/grave/grave3.jfif","./assets/img/grave/grave4.jfif"]
+jumpscare = [2,3,4]
+Quran_Verse = [1,2,3]
+
+#Reminders
+#Al Mulk
+#Surah Kahfi
+#Quotes
 
 def start(update: Update, context: CallbackContext):
-    context.bot.sendPhoto(chat_id=update.effective_chat.id, photo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2NlXqYdo_6To5nE0KZ0_3J_I0YKuL17ULCg&usqp=CAU", caption="Welcome to the QadaBot, your personal Qadha'a and Islamic verse reminder bot! Thank you for choosing us. If you don't have an account, please make one by using the command \
+    context.bot.sendPhoto(chat_id=update.effective_chat.id, photo=open("./assets/img/icon.jfif", "rb"), caption="Welcome to the QadaBot, your personal Qadha'a and Islamic verse reminder bot! Thank you for choosing us. If you don't have an account, please make one by using the command \
 /register. If you have an account, please login using the command /login. If you want to view all the commands, please use the command /help.")
+    
 
 def qadhaa(update: Update, context: CallbackContext) -> None:
     keyboard = [
@@ -86,3 +97,5 @@ updater.start_polling()
 
 # context.bot.sendPhoto(chat_id=update.effective_chat.id, photo=open("./startImage.jpg", "rb"), caption="Welcome to the QadaBot, your personal Qadha'a and Islamic verse reminder bot! Thank you for choosing us. If you don't have an account, please make one by using the command \
 #/register. If you have an account, please login using the command /login. If you want to view all the commands, please use the command /help.")
+
+#context.bot.sendPhoto(chat_id=update.effective_chat.id, photo=open(random.choice(grave),"rb"), caption="test")
