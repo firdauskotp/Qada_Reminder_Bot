@@ -136,11 +136,14 @@ def login(update: Update, context: CallbackContext):
             check_logged_user+=1
         if check_logged_user>0:
             col1.update_one({"_id":update.effective_chat.id},{"$set":{"set-status": 1}})
-    context.bot.sendMessage(chat_id=update.effective_chat.id, text="Login Successful!")
+            context.bot.sendMessage(chat_id=update.effective_chat.id, text="Login Successful!")
+        else:
+            context.bot.sendMessage(chat_id=update.effective_chat.id, text="This username is not registered! Please review the name or register a new username using /reg followed by your username")
 
 def logout(update: Update, context: CallbackContext):
+    col1.update_one({"_id":update.effective_chat.id},{"$set":{"set-status": 0}})
     context.bot.sendMessage(chat_id=update.effective_chat.id, text="Logout Successful!")
-    setStatus=0
+    
 
 def fallback(update:Update, context: CallbackContext):
     context.bot.sendMessage(chat_id=update.effective_chat.id, text="Error, command not found. Please use /help for the available commands")
