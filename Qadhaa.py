@@ -1,3 +1,5 @@
+from pymongo import message
+import telegram
 from telegram.ext import Updater
 import logging
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
@@ -5,7 +7,7 @@ from telegram.ext import CallbackContext, CommandHandler, MessageHandler, Filter
 import os
 import pymongo
 from pymongo import MongoClient
-import random
+import random, pprint, requests
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',level=logging.INFO)
 updater = Updater(token='5006375684:AAGL9DwGk9DsS1XVU-uwT48K8-VkdpRA0Dw', use_context=True)
@@ -83,14 +85,83 @@ def button(update: Update, context: CallbackContext) -> None:
 
     #query.edit_message_text(text=f"Selected option: {query.data}")
 
+def register(update: Update, context: CallbackContext):
+    
+    print (update.message.text)
+    entitites = update.message.entities
+
+    for x in entitites:
+        print(x)
+    command = update.message.text
+    l=3
+    print(len(command[0+l+1:].strip()))
+    if len(command[0+l+1:].strip())==0:
+        context.bot.sendMessage(chat_id=update.effective_chat.id, text="Please input a name to register. Example: /reg test")
+    else:
+        username=command[0+l+1:].strip()
+        username_query=col1.find({"name":username})
+        id_query=col1.find({"_id":update.effective_chat.id})
+
+        check_register_user=0
+        check_register_id=0
+
+        for get_reg_user in username_query:
+            check_register_user+=1
+        for get_reg_id in id_query:
+            check_register_id+=1
+        
+        if check_register_user==0 and check_register_id==0:
+            post_user={"_id":update.effective_chat.id,"name":username,"set_status":0}
+            col1.insert_one(post_user)
+            context.bot.sendMessage(chat_id=update.effective_chat.id, text="Congratulations, your username is registered!")
+        else:
+            context.bot.sendMessage(chat_id=update.effective_chat.id, text="Username is taken or there is an account on your current Telegram account! Please use another username")
+
+
+def login(update: Update, context: CallbackContext):
+    entitites = update.message.entities
+
+    for x in entitites:
+        print(x)
+    command = update.message.text
+    l=5
+    print(len(command[0+l+1:].strip()))
+    if len(command[0+l+1:].strip())==0:
+        context.bot.sendMessage(chat_id=update.effective_chat.id, text="Please input a name to login. Example: /login test")
+    else:
+        username=command[0+l+1:].strip()
+        username_query = col1.find({"name":username})
+        check_logged_user=0
+        for getting_logging_users in username_query:
+            check_logged_user+=1
+        if check_logged_user>0:
+            col1.update_one({"_id":update.effective_chat.id},{"$set":{"set-status": 1}})
+    context.bot.sendMessage(chat_id=update.effective_chat.id, text="Login Successful!")
+
+def logout(update: Update, context: CallbackContext):
+    context.bot.sendMessage(chat_id=update.effective_chat.id, text="Logout Successful!")
+    setStatus=0
+
+def fallback(update:Update, context: CallbackContext):
+    context.bot.sendMessage(chat_id=update.effective_chat.id, text="Error, command not found. Please use /help for the available commands")
+
 start_handler = CommandHandler('start',start)
 dispatcher = updater.dispatcher
 dispatcher.add_handler(start_handler)
 
 updater.dispatcher.add_handler(CommandHandler('qadhaa', qadhaa))
 updater.dispatcher.add_handler(CallbackQueryHandler(button))
+updater.dispatcher.add_handler(CommandHandler('reg', register))
+# updater.dispatcher.add_error_handler(fallback)
 
 
+checking = {
+    'start':start,
+    'qadhaa':qadhaa,
+    'reg':register
+}
+
+print(checking.keys())
 
 updater.start_polling()
 
