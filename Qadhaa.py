@@ -25,13 +25,14 @@ setStatus=0
 
 #lists of pictures
 grave = ["./assets/img/grave/grave1.jfif","./assets/img/grave/grave2.jfif","./assets/img/grave/grave3.jfif","./assets/img/grave/grave4.jfif"]
+quotes = ["./assets/img/islamic_quotes/islamic_quotes_1.jpg","./assets/img/islamic_quotes/islamic_quotes_2.jpg","./assets/img/islamic_quotes/islamic_quotes_3.jpg"]
+dua = ["./assets/img/dua_1.jpg"]
 jumpscare = [2,3,4]
 Quran_Verse = [1,2,3]
 
 #Reminders
 #Al Mulk
 #Surah Kahfi
-#Quotes
 
 def start(update: Update, context: CallbackContext):
     context.bot.sendPhoto(chat_id=update.effective_chat.id, photo=open("./assets/img/icon.jfif", "rb"), caption="Welcome to the QadaBot, your personal Qadha'a and Islamic verse reminder bot! Thank you for choosing us. If you don't have an account, please make one by using the command \
@@ -69,14 +70,44 @@ def button_remove(update: Update, context: CallbackContext) -> None:
     query.answer()
 
     if query.data == '1':
-        query.edit_message_text(text=f"Fajr/Subuh replacement decreased by 1")
+        subuh = col1.find({"Subuh"})
+        if subuh==0:
+            query.edit_message_text(text=f"Congrats, you have no Qadha'a left for Subuh ^_^")
+        else:
+            subuh = subuh - 1
+            col1.update_one({"_id":update.effective_chat.id},{"$set":{"Subuh":subuh}})
+            query.edit_message_text(text=f"Fajr/Subuh replacement decreased by 1")
     elif query.data == '2':
+        zohor = col1.find({"Subuh"})
+        if zohor==0:
+            query.edit_message_text(text=f"Congrats, you have no Qadha'a left for Zohor ^_^")
+        else:
+            zohor = zohor - 1
+            col1.update_one({"_id":update.effective_chat.id},{"$set":{"Zohor":zohor}})
         query.edit_message_text(text=f"Dhuhr/Zohor replacement decreased by 1")
     elif query.data == '3':
+        asar = col1.find({"Asar"})
+        if asar==0:
+            query.edit_message_text(text=f"Congrats, you have no Qadha'a left for Asar ^_^")
+        else:
+            asar = asar - 1
+            col1.update_one({"_id":update.effective_chat.id},{"$set":{"Asar":asar}})
         query.edit_message_text(text=f"Asr/Asar replacement decreased by 1")
     elif query.data == '4':
+        maghrib = col1.find({"Maghrib"})
+        if maghrib==0:
+            query.edit_message_text(text=f"Congrats, you have no Qadha'a left for Maghrib ^_^")
+        else:
+            maghrib = maghrib - 1
+            col1.update_one({"_id":update.effective_chat.id},{"$set":{"Maghrib":maghrib}})
         query.edit_message_text(text=f"Maghrib replacement decreased by 1")
     elif query.data == '5':
+        isyak = col1.find({"Isyak"})
+        if isyak==0:
+            query.edit_message_text(text=f"Congrats, you have no Qadha'a left for Isyak ^_^")
+        else:
+            isyak = isyak - 1
+            col1.update_one({"_id":update.effective_chat.id},{"$set":{"Isyak":isyak}})
         query.edit_message_text(text=f"Isha/Isyak replacement decreased by 1")
     else:
         subuh_total = col1.find({"Subuh"})
