@@ -79,7 +79,12 @@ def button_remove(update: Update, context: CallbackContext) -> None:
     elif query.data == '5':
         query.edit_message_text(text=f"Isha/Isyak replacement decreased by 1")
     else:
-        query.edit_message_text(text=f"TOTAL REPLACEMENT:\nFajr/Subuh:\nDhuhr/Zohor:\nAsr/Asar:\nMaghtib:\nIsha/Isyak:")
+        subuh_total = col1.find({"Subuh"})
+        zohor_total = col1.find({"Zohor"})
+        asar_total = col1.find({"Asar"})
+        maghrib_total = col1.find({"Maghrib"})
+        isyak_total = col1.find({"Isyak"})
+        query.edit_message_text(text=f"TOTAL REPLACEMENT:\nFajr/Subuh: " + str(subuh_total) +"\nDhuhr/Zohor: "+ str(zohor_total) +"\nAsr/Asar: "+ str(asar_total) +"\nMaghrib: "+ str(maghrib_total) +"\nIsha/Isyak: "+ str(isyak_total))
 
 def qadhaa(update: Update, context: CallbackContext) -> None:
     keyboard = [
@@ -113,19 +118,38 @@ def button(update: Update, context: CallbackContext) -> None:
     # Some clients may have trouble otherwise. See https://core.telegram.org/bots/api#callbackquery
     query.answer()
 
-    if query.data == '1':
+    if query.data == '1': 
+        subuh = col1.find({"Subuh"})
+        subuh = subuh + 1
+        col1.update_one({"_id":update.effective_chat.id},{"$set":{"Subuh":subuh}})
         query.edit_message_text(text=f"Fajr/Subuh replacement increased by 1")
     elif query.data == '2':
+        zohor = col1.find({"Zohor"})
+        zohor = zohor + 1
+        col1.update_one({"_id":update.effective_chat.id},{"$set":{"Zohor":zohor}})
         query.edit_message_text(text=f"Dhuhr/Zohor replacement increased by 1")
     elif query.data == '3':
+        asar = col1.find({"Asar"})
+        asar = asar + 1
+        col1.update_one({"_id":update.effective_chat.id},{"$set":{"Asar":asar}})
         query.edit_message_text(text=f"Asr/Asar replacement increased by 1")
     elif query.data == '4':
+        maghrib = col1.find({"Maghrib"})
+        maghrib = maghrib + 1
+        col1.update_one({"_id":update.effective_chat.id},{"$set":{"Maghrib":maghrib}})
         query.edit_message_text(text=f"Maghrib replacement increased by 1")
     elif query.data == '5':
+        isyak = col1.find({"Isyak"})
+        isyak = isyak + 1
+        col1.update_one({"_id":update.effective_chat.id},{"$set":{"Isyak":isyak}})
         query.edit_message_text(text=f"Isha/Isyak replacement increased by 1")
     else:
-        query.edit_message_text(text=f"TOTAL REPLACEMENT:\nFajr/Subuh:\nDhuhr/Zohor:\nAsr/Asar:\nMaghtib:\nIsha/Isyak:")
-
+        subuh_total = col1.find({"Subuh"})
+        zohor_total = col1.find({"Zohor"})
+        asar_total = col1.find({"Asar"})
+        maghrib_total = col1.find({"Maghrib"})
+        isyak_total = col1.find({"Isyak"})
+        query.edit_message_text(text=f"TOTAL REPLACEMENT:\nFajr/Subuh: " + str(subuh_total) +"\nDhuhr/Zohor: "+ str(zohor_total) +"\nAsr/Asar: "+ str(asar_total) +"\nMaghrib: "+ str(maghrib_total) +"\nIsha/Isyak: "+ str(isyak_total))
     #query.edit_message_text(text=f"Selected option: {query.data}")
 
 def register(update: Update, context: CallbackContext):
@@ -178,13 +202,13 @@ def login(update: Update, context: CallbackContext):
         for getting_logging_users in username_query:
             check_logged_user+=1
         if check_logged_user>0:
-            col1.update_one({"_id":update.effective_chat.id},{"$set":{"set-status": 1}})
+            col1.update_one({"_id":update.effective_chat.id},{"$set":{"set_status": 1}})
             context.bot.sendMessage(chat_id=update.effective_chat.id, text="Login Successful!")
         else:
             context.bot.sendMessage(chat_id=update.effective_chat.id, text="This username is not registered! Please review the name or register a new username using /reg followed by your username")
 
 def logout(update: Update, context: CallbackContext):
-    col1.update_one({"_id":update.effective_chat.id},{"$set":{"set-status": 0}})
+    col1.update_one({"_id":update.effective_chat.id},{"$set":{"set_status": 0}})
     context.bot.sendMessage(chat_id=update.effective_chat.id, text="Logout Successful!")
     
 
