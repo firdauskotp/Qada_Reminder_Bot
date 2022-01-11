@@ -36,7 +36,50 @@ Quran_Verse = [1,2,3]
 def start(update: Update, context: CallbackContext):
     context.bot.sendPhoto(chat_id=update.effective_chat.id, photo=open("./assets/img/icon.jfif", "rb"), caption="Welcome to the QadaBot, your personal Qadha'a and Islamic verse reminder bot! Thank you for choosing us. If you don't have an account, please make one by using the command \
 /register. If you have an account, please login using the command /login. If you want to view all the commands, please use the command /help.")
-    
+
+def remove(update: Update, context: CallbackContext) -> None:
+    keyboard = [
+        [
+            InlineKeyboardButton("Fajr/Subuh", callback_data='1'),
+            InlineKeyboardButton("Dhuhr/Zohor", callback_data='2'),
+            
+            
+        ],
+        [
+            InlineKeyboardButton("Asr/Asar", callback_data='3'),
+            InlineKeyboardButton("Maghrib", callback_data='4'),
+         ],
+        [InlineKeyboardButton("Isha/Isyak", callback_data='5'),],
+        [InlineKeyboardButton("Back", callback_data='6')],
+    ]
+
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
+    update.message.reply_text('Which Prayer Time You Had Replaced?', reply_markup=reply_markup)
+
+    #if reply_markup ==1:
+        #update.message.reply_text('Which Prayer Time You Want To Set A Reminder To Replace', reply_markup="messages updated")
+
+def button_remove(update: Update, context: CallbackContext) -> None:
+    """Parses the CallbackQuery and updates the message text."""
+    query = update.callback_query
+
+    # CallbackQueries need to be answered, even if no notification to the user is needed
+    # Some clients may have trouble otherwise. See https://core.telegram.org/bots/api#callbackquery
+    query.answer()
+
+    if query.data == '1':
+        query.edit_message_text(text=f"Fajr/Subuh replacement decreased by 1")
+    elif query.data == '2':
+        query.edit_message_text(text=f"Dhuhr/Zohor replacement decreased by 1")
+    elif query.data == '3':
+        query.edit_message_text(text=f"Asr/Asar replacement decreased by 1")
+    elif query.data == '4':
+        query.edit_message_text(text=f"Maghrib replacement decreased by 1")
+    elif query.data == '5':
+        query.edit_message_text(text=f"Isha/Isyak replacement decreased by 1")
+    else:
+        query.edit_message_text(text=f"TOTAL REPLACEMENT:\nFajr/Subuh:\nDhuhr/Zohor:\nAsr/Asar:\nMaghtib:\nIsha/Isyak:")
 
 def qadhaa(update: Update, context: CallbackContext) -> None:
     keyboard = [
@@ -111,7 +154,7 @@ def register(update: Update, context: CallbackContext):
             check_register_id+=1
         
         if check_register_user==0 and check_register_id==0:
-            post_user={"_id":update.effective_chat.id,"name":username,"set_status":0}
+            post_user={"_id":update.effective_chat.id,"name":username,"set_status":0,"Subuh":0,"Zohor":0,"Asar":0,"Maghrib":0,"Isyak":0}
             col1.insert_one(post_user)
             context.bot.sendMessage(chat_id=update.effective_chat.id, text="Congratulations, your username is registered!")
         else:
@@ -154,6 +197,8 @@ dispatcher.add_handler(start_handler)
 
 updater.dispatcher.add_handler(CommandHandler('qadhaa', qadhaa))
 updater.dispatcher.add_handler(CallbackQueryHandler(button))
+updater.dispatcher.add_handler(CommandHandler('remove', remove))
+updater.dispatcher.add_handler(CallbackQueryHandler(button_remove))
 updater.dispatcher.add_handler(CommandHandler('reg', register))
 # updater.dispatcher.add_error_handler(fallback)
 
