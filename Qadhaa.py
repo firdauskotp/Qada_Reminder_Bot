@@ -26,7 +26,7 @@ setStatus=0
 #lists of pictures
 grave = ["./assets/img/grave/grave1.jfif","./assets/img/grave/grave2.jfif","./assets/img/grave/grave3.jfif","./assets/img/grave/grave4.jfif"]
 quotes = ["./assets/img/islamic_quotes/islamic_quotes_1.jpg","./assets/img/islamic_quotes/islamic_quotes_2.jpg","./assets/img/islamic_quotes/islamic_quotes_3.jpg"]
-dua = ["./assets/img/dua_1.jpg"]
+dua = ["./assets/img/dua/dua_1.jpg","./assets/img/dua/dua_2.jpg","./assets/img/dua/dua_3.jpg","./assets/img/dua/dua_4.jpg","./assets/img/dua/dua_5.jpg"]
 jumpscare = [2,3,4]
 Quran_Verse = [1,2,3]
 
