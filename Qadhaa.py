@@ -12,8 +12,8 @@ import schedule
 from datetime import datetime
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',level=logging.INFO)
-updater = Updater(token='<token>', use_context=True)
-client = pymongo.MongoClient("mongodb+srv://<user>:<pass>@cluster0.lsslc.mongodb.net/<database>?retryWrites=true&w=majority")
+updater = Updater(token='5006375684:AAGL9DwGk9DsS1XVU-uwT48K8-VkdpRA0Dw', use_context=True)
+client = pymongo.MongoClient("mongodb+srv://fkna:firdausafiqkhaiacap@cluster0.lsslc.mongodb.net/userDB?retryWrites=true&w=majority")
 
 db = client["userDB"]
 col1=db["userC"]
@@ -237,9 +237,18 @@ def login(update: Update, context: CallbackContext):
             context.bot.sendMessage(chat_id=update.effective_chat.id, text="This username is not registered! Please review the name or register a new username using /reg followed by your username")
 
 def logout(update: Update, context: CallbackContext):
-    col1.update_one({"_id":update.effective_chat.id},{"$set":{"set_status": 0}})
-    context.bot.sendMessage(chat_id=update.effective_chat.id, text="Logout Successful!")
-    
+    try:
+        getting_status_logout = col1.find({"_id":update.effective_chat.id})
+        for getting_id_logout in getting_status_logout:
+            setStatus = getting_id_logout["set_status"]
+
+        if setStatus == 1:
+            col1.update_one({"_id":update.effective_chat.id},{"$set":{"set_status": 0}})
+            context.bot.sendMessage(chat_id=update.effective_chat.id, text="Logout Successful!")
+        else:
+            context.bot.sendMessage(chat_id=update.effective_chat.id, text="Please login to use this function. Use the /help command for more details")
+    except:
+        context.bot.sendMessage(chat_id=update.effective_chat.id, text="Please login to use this function. Use the /help command for more details")
 
 def fallback(update:Update, context: CallbackContext):
     context.bot.sendMessage(chat_id=update.effective_chat.id, text="Error, command not found. Please use /help for the available commands")
@@ -294,8 +303,8 @@ def extreme_reminder(update:Update, context:CallbackContext):
 def help(update:Update, context: CallbackContext):
     context.bot.sendMessage(chat_id=update.effective_chat.id, text="PLEASE NOTE THAT IN THIS VERSION, THE BOT USES ASIA/SINGAPORE TIMEZONE \n \n Thank you for using our bot, we hope you will benefit from it! Here are the available commands \
         \n \n DON'T NEED AN ACCOUNT \n /help = bring up this help message section \n /reg abc = To register your username. Please substitute abc with your desired username. NOTE THAT ONLY ONE USER CAN REGISTER ON ONE ACCOUNT AND YOU CANNOT USE A DUPLICATE USERNAME \
-        \n /login abc = To login with your username. Please substitute abc with your username \n /logout = To logout your account \n /onquotes = To send Dua' and Islamic quotes \n \n NEED AN ACCOUNT \n /qadhaa = To add the prayer times that is missed. If back is pressed, the total prayer times needed to be replaced is shown \
-        \n /remove = To remove a prayer replacement. If back is pressed, the total prayer times needed to be replaced is shown. \n /total = Shows the total prayer replacements \n /er = An extreme reminder of why we should replace our prayers [TO BE AUTOMATIC IN A FUTURE VERSION]")
+        \n /login abc = To login with your username. Please substitute abc with your username  \n /onquotes = To send Dua' and Islamic quotes \n \n NEED AN ACCOUNT \n /qadhaa = To add the prayer times that is missed. If back is pressed, the total prayer times needed to be replaced is shown \
+        \n /remove = To remove a prayer replacement. If back is pressed, the total prayer times needed to be replaced is shown \n /logout = To logout your account \n /total = Shows the total prayer replacements \n /er = An extreme reminder of why we should replace our prayers [TO BE AUTOMATIC IN A FUTURE VERSION]")
 start_handler = CommandHandler('start',start)
 dispatcher = updater.dispatcher
 dispatcher.add_handler(start_handler)
