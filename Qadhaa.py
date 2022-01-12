@@ -7,7 +7,7 @@ from telegram.ext import CallbackContext, CommandHandler, MessageHandler, Filter
 import os
 import pymongo
 from pymongo import MongoClient
-import random, pprint, requests
+import random, pprint, datetime, time
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',level=logging.INFO)
 updater = Updater(token='5006375684:AAGL9DwGk9DsS1XVU-uwT48K8-VkdpRA0Dw', use_context=True)
@@ -23,6 +23,7 @@ maghrib=0
 isyak=0
 setStatus=0
 
+
 #lists of pictures
 grave = ["./assets/img/grave/grave1.jfif","./assets/img/grave/grave2.jfif","./assets/img/grave/grave3.jfif","./assets/img/grave/grave4.jfif"]
 quotes = ["./assets/img/islamic_quotes/islamic_quotes_1.jpg","./assets/img/islamic_quotes/islamic_quotes_2.jpg","./assets/img/islamic_quotes/islamic_quotes_3.jpg"]
@@ -36,27 +37,34 @@ Quran_Verse = [1,2,3]
 
 def start(update: Update, context: CallbackContext):
     context.bot.sendPhoto(chat_id=update.effective_chat.id, photo=open("./assets/img/icon.jfif", "rb"), caption="Welcome to the QadaBot, your personal Qadha'a and Islamic verse reminder bot! Thank you for choosing us. If you don't have an account, please make one by using the command \
-/register. If you have an account, please login using the command /login. If you want to view all the commands, please use the command /help.")
+/register. If you have an account, please login using the command /login. If you want to view all the commands, please use the command /help. \n\n PLEASE NOTE THAT IN THIS VERSION, THE BOT USES ASIA/SINGAPORE TIMEZONE")
 
 def remove(update: Update, context: CallbackContext) -> None:
-    keyboard = [
-        [
-            InlineKeyboardButton("Fajr/Subuh", callback_data='1'),
-            InlineKeyboardButton("Dhuhr/Zohor", callback_data='2'),
-            
-            
-        ],
-        [
-            InlineKeyboardButton("Asr/Asar", callback_data='3'),
-            InlineKeyboardButton("Maghrib", callback_data='4'),
-         ],
-        [InlineKeyboardButton("Isha/Isyak", callback_data='5'),],
-        [InlineKeyboardButton("Back", callback_data='6')],
-    ]
 
-    reply_markup = InlineKeyboardMarkup(keyboard)
+    getting_status = col1.find({"_id":update.effective_chat.id})
+    for getting_id in getting_status:
+        setStatus = getting_id["set_status"]
+    if setStatus ==1:
+        keyboard = [
+            [
+                InlineKeyboardButton("Fajr/Subuh", callback_data='1'),
+                InlineKeyboardButton("Dhuhr/Zohor", callback_data='2'),
+                
+                
+            ],
+            [
+                InlineKeyboardButton("Asr/Asar", callback_data='3'),
+                InlineKeyboardButton("Maghrib", callback_data='4'),
+            ],
+            [InlineKeyboardButton("Isha/Isyak", callback_data='5'),],
+            [InlineKeyboardButton("Back", callback_data='6')],
+        ]
 
-    update.message.reply_text('Which Prayer Time You Had Replaced?', reply_markup=reply_markup)
+        reply_markup = InlineKeyboardMarkup(keyboard)
+
+        update.message.reply_text('Which Prayer Time You Had Replaced?', reply_markup=reply_markup)
+    else:
+        context.bot.sendMessage(chat_id=update.effective_chat.id, text="Please login to use this function. Use the /help button for more details")
 
     #if reply_markup ==1:
         #update.message.reply_text('Which Prayer Time You Want To Set A Reminder To Replace', reply_markup="messages updated")
@@ -69,8 +77,22 @@ def button_remove(update: Update, context: CallbackContext) -> None:
     # Some clients may have trouble otherwise. See https://core.telegram.org/bots/api#callbackquery
     query.answer()
 
+    getting_decrease_from_id = col1.find({"_id":update.effective_chat.id})
+
+    for getting_decrease_results in getting_decrease_from_id:
+        subuh = getting_decrease_results["Subuh"]
+        zohor = getting_decrease_results["Zohor"]
+        asar = getting_decrease_results["Asar"]
+        maghrib = getting_decrease_results["Maghrib"]
+        isyak = getting_decrease_results["Isyak"]
+
+    subuh_total = subuh
+    zohor_total = zohor
+    asar_total = asar
+    maghrib_total = maghrib
+    isyak_total = isyak
+
     if query.data == '1':
-        subuh = col1.find({"Subuh"})
         if subuh==0:
             query.edit_message_text(text=f"Congrats, you have no Qadha'a left for Subuh ^_^")
         else:
@@ -78,7 +100,6 @@ def button_remove(update: Update, context: CallbackContext) -> None:
             col1.update_one({"_id":update.effective_chat.id},{"$set":{"Subuh":subuh}})
             query.edit_message_text(text=f"Fajr/Subuh replacement decreased by 1")
     elif query.data == '2':
-        zohor = col1.find({"Subuh"})
         if zohor==0:
             query.edit_message_text(text=f"Congrats, you have no Qadha'a left for Zohor ^_^")
         else:
@@ -86,7 +107,6 @@ def button_remove(update: Update, context: CallbackContext) -> None:
             col1.update_one({"_id":update.effective_chat.id},{"$set":{"Zohor":zohor}})
         query.edit_message_text(text=f"Dhuhr/Zohor replacement decreased by 1")
     elif query.data == '3':
-        asar = col1.find({"Asar"})
         if asar==0:
             query.edit_message_text(text=f"Congrats, you have no Qadha'a left for Asar ^_^")
         else:
@@ -94,7 +114,6 @@ def button_remove(update: Update, context: CallbackContext) -> None:
             col1.update_one({"_id":update.effective_chat.id},{"$set":{"Asar":asar}})
         query.edit_message_text(text=f"Asr/Asar replacement decreased by 1")
     elif query.data == '4':
-        maghrib = col1.find({"Maghrib"})
         if maghrib==0:
             query.edit_message_text(text=f"Congrats, you have no Qadha'a left for Maghrib ^_^")
         else:
@@ -102,7 +121,6 @@ def button_remove(update: Update, context: CallbackContext) -> None:
             col1.update_one({"_id":update.effective_chat.id},{"$set":{"Maghrib":maghrib}})
         query.edit_message_text(text=f"Maghrib replacement decreased by 1")
     elif query.data == '5':
-        isyak = col1.find({"Isyak"})
         if isyak==0:
             query.edit_message_text(text=f"Congrats, you have no Qadha'a left for Isyak ^_^")
         else:
@@ -110,32 +128,34 @@ def button_remove(update: Update, context: CallbackContext) -> None:
             col1.update_one({"_id":update.effective_chat.id},{"$set":{"Isyak":isyak}})
         query.edit_message_text(text=f"Isha/Isyak replacement decreased by 1")
     else:
-        subuh_total = col1.find({"Subuh"})
-        zohor_total = col1.find({"Zohor"})
-        asar_total = col1.find({"Asar"})
-        maghrib_total = col1.find({"Maghrib"})
-        isyak_total = col1.find({"Isyak"})
         query.edit_message_text(text=f"TOTAL REPLACEMENT:\nFajr/Subuh: " + str(subuh_total) +"\nDhuhr/Zohor: "+ str(zohor_total) +"\nAsr/Asar: "+ str(asar_total) +"\nMaghrib: "+ str(maghrib_total) +"\nIsha/Isyak: "+ str(isyak_total))
 
 def qadhaa(update: Update, context: CallbackContext) -> None:
-    keyboard = [
-        [
-            InlineKeyboardButton("Fajr/Subuh", callback_data='1'),
-            InlineKeyboardButton("Dhuhr/Zohor", callback_data='2'),
-            
-            
-        ],
-        [
-            InlineKeyboardButton("Asr/Asar", callback_data='3'),
-            InlineKeyboardButton("Maghrib", callback_data='4'),
-         ],
-        [InlineKeyboardButton("Isha/Isyak", callback_data='5'),],
-        [InlineKeyboardButton("Back", callback_data='6')],
-    ]
+    getting_status_insert = col1.find({"_id":update.effective_chat.id})
+    for getting_id_insert in getting_status_insert:
+        setStatus = getting_id_insert["set_status"]
 
-    reply_markup = InlineKeyboardMarkup(keyboard)
+    if setStatus == 1:
+        keyboard = [
+            [
+                InlineKeyboardButton("Fajr/Subuh", callback_data='1'),
+                InlineKeyboardButton("Dhuhr/Zohor", callback_data='2'),
+                
+                
+            ],
+            [
+                InlineKeyboardButton("Asr/Asar", callback_data='3'),
+                InlineKeyboardButton("Maghrib", callback_data='4'),
+            ],
+            [InlineKeyboardButton("Isha/Isyak", callback_data='5'),],
+            [InlineKeyboardButton("Back", callback_data='6')],
+        ]
 
-    update.message.reply_text('Which Prayer Time You Want To Set A Reminder To Replace', reply_markup=reply_markup)
+        reply_markup = InlineKeyboardMarkup(keyboard)
+
+        update.message.reply_text('Which Prayer Time You Want To Set A Reminder To Replace', reply_markup=reply_markup)
+    else:
+        context.bot.sendMessage(chat_id=update.effective_chat.id, text="Please login to use this function. Use the /help button for more details")
 
     #if reply_markup ==1:
         #update.message.reply_text('Which Prayer Time You Want To Set A Reminder To Replace', reply_markup="messages updated")
@@ -149,37 +169,42 @@ def button(update: Update, context: CallbackContext) -> None:
     # Some clients may have trouble otherwise. See https://core.telegram.org/bots/api#callbackquery
     query.answer()
 
+    getting_result_from_id = col1.find({"_id":update.effective_chat.id})
+
+    for getting_results in getting_result_from_id:
+        subuh = getting_results["Subuh"]
+        zohor = getting_results["Zohor"]
+        asar = getting_results["Asar"]
+        maghrib = getting_results["Maghrib"]
+        isyak = getting_results["Isyak"]
+
+    subuh_total = subuh
+    zohor_total = zohor
+    asar_total = asar
+    maghrib_total = maghrib
+    isyak_total = isyak
+
     if query.data == '1': 
-        subuh = col1.find({"Subuh"})
         subuh = subuh + 1
         col1.update_one({"_id":update.effective_chat.id},{"$set":{"Subuh":subuh}})
         query.edit_message_text(text=f"Fajr/Subuh replacement increased by 1")
     elif query.data == '2':
-        zohor = col1.find({"Zohor"})
         zohor = zohor + 1
         col1.update_one({"_id":update.effective_chat.id},{"$set":{"Zohor":zohor}})
         query.edit_message_text(text=f"Dhuhr/Zohor replacement increased by 1")
     elif query.data == '3':
-        asar = col1.find({"Asar"})
         asar = asar + 1
         col1.update_one({"_id":update.effective_chat.id},{"$set":{"Asar":asar}})
         query.edit_message_text(text=f"Asr/Asar replacement increased by 1")
     elif query.data == '4':
-        maghrib = col1.find({"Maghrib"})
         maghrib = maghrib + 1
         col1.update_one({"_id":update.effective_chat.id},{"$set":{"Maghrib":maghrib}})
         query.edit_message_text(text=f"Maghrib replacement increased by 1")
     elif query.data == '5':
-        isyak = col1.find({"Isyak"})
         isyak = isyak + 1
         col1.update_one({"_id":update.effective_chat.id},{"$set":{"Isyak":isyak}})
         query.edit_message_text(text=f"Isha/Isyak replacement increased by 1")
     else:
-        subuh_total = col1.find({"Subuh"})
-        zohor_total = col1.find({"Zohor"})
-        asar_total = col1.find({"Asar"})
-        maghrib_total = col1.find({"Maghrib"})
-        isyak_total = col1.find({"Isyak"})
         query.edit_message_text(text=f"TOTAL REPLACEMENT:\nFajr/Subuh: " + str(subuh_total) +"\nDhuhr/Zohor: "+ str(zohor_total) +"\nAsr/Asar: "+ str(asar_total) +"\nMaghrib: "+ str(maghrib_total) +"\nIsha/Isyak: "+ str(isyak_total))
     #query.edit_message_text(text=f"Selected option: {query.data}")
 
@@ -246,6 +271,8 @@ def logout(update: Update, context: CallbackContext):
 def fallback(update:Update, context: CallbackContext):
     context.bot.sendMessage(chat_id=update.effective_chat.id, text="Error, command not found. Please use /help for the available commands")
 
+# def help(update:Update, context: CallbackContext):
+
 start_handler = CommandHandler('start',start)
 dispatcher = updater.dispatcher
 dispatcher.add_handler(start_handler)
@@ -255,13 +282,20 @@ updater.dispatcher.add_handler(CallbackQueryHandler(button))
 updater.dispatcher.add_handler(CommandHandler('remove', remove))
 updater.dispatcher.add_handler(CallbackQueryHandler(button_remove))
 updater.dispatcher.add_handler(CommandHandler('reg', register))
+updater.dispatcher.add_handler(CommandHandler('login', login))
+updater.dispatcher.add_handler(CommandHandler('logout', logout))
+
 # updater.dispatcher.add_error_handler(fallback)
 
 
 checking = {
     'start':start,
     'qadhaa':qadhaa,
-    'reg':register
+    'reg':register,
+    'login':login,
+    'remove':remove,
+    'logout':logout,
+    'help':help
 }
 
 print(checking.keys())
