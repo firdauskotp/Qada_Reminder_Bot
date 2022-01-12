@@ -1,42 +1,41 @@
 # Qada_Reminder_Bot
 
-### How to Clone the project
+### How to use this bot
 
-1. Open a terminal of your choice and change directory to where you wish to clone the project
-2. Execute this command
-
-```
-git clone "https://github.com/firdauskotp/Qada_Reminder_Bot.git"
-```
-
-3. Open your IDE and open the folder that is cloned
-
-## Make a new branch
-
-1. Open the terminal
-2. Execute this command for new branch
+1. Open Telegram
+2. In the search bar, search for
 
 ```
-git checkout -b "branch name"
+@QadhaaBot
 ```
 
-## Switch to branch
+3. Press on start
 
-1. Open the terminal
-2. Execute this command
+## What is the use of this bot?
 
-```
-git checkout "branch name"
-```
+1. To remind Muslims on prayers that they missed
+2. To provide Islamic Quotes and Dua's
+## What commands are available?
 
-## How to Push Changes
+**Please note that you need to use / in front of the commands. Example, /help**
 
-1. Open the terminal
-2. Execute these commands
+### DON'T NEED AN ACCOUNT 
+/help = bring up this help message section 
+/reg abc = To register your username. Please substitute abc with your desired username. NOTE THAT ONLY ONE USER CAN REGISTER ON ONE ACCOUNT AND YOU CANNOT USE A DUPLICATE USERNAME 
+/login abc = To login with your username. Please substitute abc with your username
+/logout = To logout your account
+/onquotes = To send Dua' and Islamic quotes
 
-```
-git add .
-git commit -m "Input what you have changed here"
-git pull origin main
-git push
-```
+### NEED AN ACCOUNT 
+/qadhaa = To add the prayer times that is missed. If back is pressed, the total prayer times needed to be replaced is shown
+/remove = To remove a prayer replacement. If back is pressed, the total prayer times needed to be replaced is shown.
+/total = Shows the total prayer replacements
+/er = An extreme reminder of why we should replace our prayers [TO BE AUTOMATIC IN A FUTURE VERSION]")
+
+## What to expect for upcoming versions?
+
+1. Automatic reminder of how many prayer replacements are left at specific times
+2. Provide the quotes and dua' every day at a specific time(optional)
+3. Provide some useful Surah as reminder on when to read them
+4. Use the /er command automatically when the user did not replace prayers for maximum 5 days
+
