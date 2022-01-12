@@ -12,8 +12,8 @@ import schedule
 from datetime import datetime
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',level=logging.INFO)
-updater = Updater(token='5006375684:AAGL9DwGk9DsS1XVU-uwT48K8-VkdpRA0Dw', use_context=True)
-client = pymongo.MongoClient("mongodb+srv://fkna:firdausafiqkhaiacap@cluster0.lsslc.mongodb.net/userDB?retryWrites=true&w=majority")
+updater = Updater(token='<token>', use_context=True)
+client = pymongo.MongoClient("mongodb+srv://<user>:<pass>@cluster0.lsslc.mongodb.net/<database>?retryWrites=true&w=majority")
 
 db = client["userDB"]
 col1=db["userC"]
@@ -26,7 +26,6 @@ isyak=0
 setStatus=0
 # usid=0
 
-PORT = int(os.environ.get('PORT', '8443'))
 
 def start(update: Update, context: CallbackContext):
     context.bot.sendPhoto(chat_id=update.effective_chat.id, photo=open("./assets/img/icon.jfif", "rb"), caption="Welcome to the QadaBot, your personal Qadha'a and Islamic verse reminder bot! Thank you for choosing us. If you don't have an account, please make one by using the command \
@@ -297,20 +296,20 @@ def help(update:Update, context: CallbackContext):
         \n \n DON'T NEED AN ACCOUNT \n /help = bring up this help message section \n /reg abc = To register your username. Please substitute abc with your desired username. NOTE THAT ONLY ONE USER CAN REGISTER ON ONE ACCOUNT AND YOU CANNOT USE A DUPLICATE USERNAME \
         \n /login abc = To login with your username. Please substitute abc with your username \n /logout = To logout your account \n /onquotes = To send Dua' and Islamic quotes \n \n NEED AN ACCOUNT \n /qadhaa = To add the prayer times that is missed. If back is pressed, the total prayer times needed to be replaced is shown \
         \n /remove = To remove a prayer replacement. If back is pressed, the total prayer times needed to be replaced is shown. \n /total = Shows the total prayer replacements \n /er = An extreme reminder of why we should replace our prayers [TO BE AUTOMATIC IN A FUTURE VERSION]")
-# start_handler = CommandHandler('start',start)
-# dispatcher = updater.dispatcher
-# dispatcher.add_handler(start_handler)
+start_handler = CommandHandler('start',start)
+dispatcher = updater.dispatcher
+dispatcher.add_handler(start_handler)
 
-# updater.dispatcher.add_handler(CommandHandler('qadhaa', qadhaa))
-# updater.dispatcher.add_handler(CallbackQueryHandler(button))
-# updater.dispatcher.add_handler(CommandHandler('remove', remove))
-# updater.dispatcher.add_handler(CommandHandler('reg', register))
-# updater.dispatcher.add_handler(CommandHandler('login', login))
-# updater.dispatcher.add_handler(CommandHandler('logout', logout))
-# updater.dispatcher.add_handler(CommandHandler('total', total))
-# updater.dispatcher.add_handler(CommandHandler('help', help))
-# updater.dispatcher.add_handler(CommandHandler('onquotes', onquotes))
-# updater.dispatcher.add_handler(CommandHandler('er', extreme_reminder))
+updater.dispatcher.add_handler(CommandHandler('qadhaa', qadhaa))
+updater.dispatcher.add_handler(CallbackQueryHandler(button))
+updater.dispatcher.add_handler(CommandHandler('remove', remove))
+updater.dispatcher.add_handler(CommandHandler('reg', register))
+updater.dispatcher.add_handler(CommandHandler('login', login))
+updater.dispatcher.add_handler(CommandHandler('logout', logout))
+updater.dispatcher.add_handler(CommandHandler('total', total))
+updater.dispatcher.add_handler(CommandHandler('help', help))
+updater.dispatcher.add_handler(CommandHandler('onquotes', onquotes))
+updater.dispatcher.add_handler(CommandHandler('er', extreme_reminder))
 # updater.dispatcher.add_handler(CommandHandler('offquotes', offquotes))
 
 # updater.dispatcher.add_error_handler(fallback)
@@ -333,40 +332,4 @@ checking = {
 }
 
 
-# updater.start_polling()
-
-def main():
-    """Start the bot."""
-    TOKEN = "5006375684:AAGL9DwGk9DsS1XVU-uwT48K8-VkdpRA0Dw"
-    APP_NAME="qadabot"
-    # Create the Updater and pass it your bot's token.
-    # Make sure to set use_context=True to use the new context based callbacks
-    # Post version 12 this will no longer be necessary
-    updater = Updater(
-        TOKEN, use_context=True)
-
-    # Get the dispatcher to register handlers
-    dp = updater.dispatcher
-
-    # on different commands - answer in Telegram
-    dp.add_handler(CommandHandler('qadhaa', qadhaa))
-    dp.add_handler(CallbackQueryHandler(button))
-    dp.add_handler(CommandHandler('remove', remove))
-    dp.add_handler(CommandHandler('reg', register))
-    dp.add_handler(CommandHandler('login', login))
-    dp.add_handler(CommandHandler('logout', logout))
-    dp.add_handler(CommandHandler('total', total))
-    dp.add_handler(CommandHandler('help', help))
-    dp.add_handler(CommandHandler('onquotes', onquotes))
-    dp.add_handler(CommandHandler('er', extreme_reminder))
-
-    # Start the Bot
-    updater.start_webhook(listen="0.0.0.0",
-                          port=PORT,
-                          url_path=TOKEN,
-                          webhook_url="https://git.heroku.com/qadabot.git" + TOKEN)
-    updater.idle()
-
-
-if __name__ == '__main__':
-    main()
+updater.start_polling()
