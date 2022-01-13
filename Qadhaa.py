@@ -12,8 +12,8 @@ import schedule
 from datetime import datetime
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',level=logging.INFO)
-updater = Updater(token='5006375684:AAGL9DwGk9DsS1XVU-uwT48K8-VkdpRA0Dw', use_context=True)
-client = pymongo.MongoClient("mongodb+srv://fkna:firdausafiqkhaiacap@cluster0.lsslc.mongodb.net/userDB?retryWrites=true&w=majority")
+updater = Updater(token='TOKEN', use_context=True)
+client = pymongo.MongoClient("mongodb+srv://<username>:<password>@cluster0.lsslc.mongodb.net/<database>?retryWrites=true&w=majority")
 
 db = client["userDB"]
 col1=db["userC"]
